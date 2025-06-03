@@ -40,11 +40,21 @@
                          ContentTemplate="{DataTemplate views:ProfilePage}"
                          Route="ProfilePage" />
         </Tab>
+
+        <Tab Title="Rated" Icon="star_icon.png">
+            <ShellContent Title="Rated Movies"
+                         ContentTemplate="{DataTemplate views:RatedMoviesPage}"
+                         Route="RatedMoviesPage" />
+        </Tab>
     </TabBar>
 
     <!-- Detail Pages -->
     <ShellContent Title="Movie Details"
                   ContentTemplate="{DataTemplate views:MovieDetailPage}"
                   Route="MovieDetailPage" />
+
+    <ShellContent Title="Rated Movies"
+                  ContentTemplate="{DataTemplate views:RatedMoviesPage}"
+                  Route="RatedMoviesPage" />
 
 </Shell>

@@ -41,13 +41,17 @@
                                Margin="12,0,0,0"
                                VerticalOptions="Center" />
                         <Entry Grid.Column="1"
-                               Placeholder="Search movies..."
+                               Placeholder="Film adına göre ara..."
                                Text="{Binding SearchText}"
                                TextColor="#fff"
                                PlaceholderColor="#bdbdbd"
                                FontSize="14"
                                Margin="8,0"
-                               BackgroundColor="Transparent" />
+                               BackgroundColor="Transparent">
+                            <Entry.Behaviors>
+                                <behaviors:SearchTextChangedBehavior Command="{Binding SearchCommand}" />
+                            </Entry.Behaviors>
+                        </Entry>
                         <Button Grid.Column="2"
                                 Text="✕"
                                 TextColor="#bdbdbd"
@@ -103,6 +107,14 @@
                                         IsSelected="{Binding IsDramaSelected}"
                                         Command="{Binding FilterCommand}"
                                         CommandParameter="Drama" />
+                    <controls:ChipControl Text="Local" 
+                                        IsSelected="{Binding IsLocalSelected}"
+                                        Command="{Binding FilterCommand}"
+                                        CommandParameter="Local" />
+                    <controls:ChipControl Text="Foreign" 
+                                        IsSelected="{Binding IsForeignSelected}"
+                                        Command="{Binding FilterCommand}"
+                                        CommandParameter="Foreign" />
                 </HorizontalStackLayout>
             </ScrollView>
 
@@ -116,7 +128,7 @@
                               SelectedItem="{Binding SelectedMovie, Mode=TwoWay}">
                     <CollectionView.ItemsLayout>
                         <GridItemsLayout Orientation="Vertical" 
-                                       Span="2" 
+                                       Span="4" 
                                        HorizontalItemSpacing="8"
                                        VerticalItemSpacing="8" />
                     </CollectionView.ItemsLayout>
@@ -148,22 +160,23 @@
                     </CollectionView.EmptyView>
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:Movie">
-                            <Frame Margin="8" 
+                            <Frame Margin="0" 
                                    Padding="0" 
                                    CornerRadius="16" 
                                    HasShadow="True" 
                                    BackgroundColor="#232526" 
-                                   BorderColor="#7B2FF2">
-                                <Grid RowDefinitions="Auto,Auto">
+                                   BorderColor="#7B2FF2"
+                                   HorizontalOptions="FillAndExpand"
+                                   VerticalOptions="FillAndExpand">
+                                <Grid RowDefinitions="*,Auto">
                                     <!-- Movie Poster -->
                                     <Grid>
                                         <Image x:Name="PosterImage"
                                                Source="{Binding PosterPath, Converter={StaticResource NullToNoImageConverter}}"
                                                Aspect="AspectFill"
-                                               HeightRequest="200"
-                                               WidthRequest="150"
-                                               VerticalOptions="Center" 
-                                               HorizontalOptions="Center">
+                                               HorizontalOptions="FillAndExpand"
+                                               VerticalOptions="FillAndExpand"
+                                               HeightRequest="300">
                                             <Image.Behaviors>
                                                 <behaviors:FadeAnimation Duration="800" />
                                             </Image.Behaviors>

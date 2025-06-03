@@ -13,6 +13,12 @@ services:
     volumes:
       - sqldata:/var/opt/mssqls
     restart: unless-stopped
+  adminer:
+    image: adminer
+    container_name: movieapp-adminer
+    restart: unless-stopped
+    ports:
+      - "4242:8080"
 
 volumes:
   sqldata: 

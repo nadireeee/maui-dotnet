@@ -291,25 +291,14 @@ public class ApiService
 
     public async Task<List<Movie>> GetMoviesAsync()
     {
-        try
-        {
-            Debug.WriteLine($"[ApiService] Token: {_authToken} / Static: {_staticToken}");
-            Debug.WriteLine($"[ApiService] Auth Header: {_httpClient.DefaultRequestHeaders.Authorization}");
-            System.Diagnostics.Debug.WriteLine("[ApiService] GET /api/movies endpointine istek atılıyor...");
-            var response = await _httpClient.GetAsync("/api/movies");
-            System.Diagnostics.Debug.WriteLine($"[ApiService] GET /api/movies response status: {response.StatusCode}");
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                System.Diagnostics.Debug.WriteLine($"[ApiService] GET /api/movies error: {errorContent}");
-            }
-            return response.IsSuccessStatusCode ? (await DeserializeResponse<List<Movie>>(response)) ?? new() : new();
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"[ApiService] GetMovies error: {ex.Message}\n{ex.StackTrace}");
-            return new();
-        }
+        var response = await _httpClient.GetAsync("/api/movies");
+        return response.IsSuccessStatusCode ? (await DeserializeResponse<List<Movie>>(response)) ?? new() : new();
+    }
+
+    public async Task<List<Movie>> SearchMoviesAsync(string query)
+    {
+        var response = await _httpClient.GetAsync($"/api/movies/search?query={Uri.EscapeDataString(query)}");
+        return response.IsSuccessStatusCode ? (await DeserializeResponse<List<Movie>>(response)) ?? new() : new();
     }
 
     public async Task<Movie?> GetMovieByIdAsync(int id)
@@ -505,6 +494,14 @@ public class ApiService
             return result;
         }
         return false;
+    }
+
+    public async Task<List<UserRating>> GetUserRatingsAsync(int userId)
+    {
+        var response = await _httpClient.GetAsync($"/api/users/{userId}/ratings");
+        response.EnsureSuccessStatusCode();
+        var json = await response.Content.ReadAsStringAsync();
+        return JsonSerializer.Deserialize<List<UserRating>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<UserRating>();
     }
 }
 

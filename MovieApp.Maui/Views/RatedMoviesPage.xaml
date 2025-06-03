@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel="clr-namespace:MovieApp.Maui.ViewModels"
+             xmlns:models="clr-namespace:MovieApp.Maui.Models"
+             xmlns:behaviors="clr-namespace:MovieApp.Maui.Behaviors"
+             x:Class="MovieApp.Maui.Views.RatedMoviesPage"
+             x:DataType="viewmodel:RatedMoviesViewModel"
+             BackgroundColor="#181818"
+             Title="Rated Movies">
+    <ContentPage.Content>
+        <Grid>
+            <Grid.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#181818" Offset="0.0" />
+                    <GradientStop Color="#232526" Offset="0.5" />
+                    <GradientStop Color="#1a1a2e" Offset="1.0" />
+                </LinearGradientBrush>
+            </Grid.Background>
+            <CollectionView x:Name="RatedMoviesCollection" ItemsSource="{Binding RatedMovies}"
+                            SelectionMode="Single"
+                            SelectedItem="{Binding SelectedRating, Mode=TwoWay}"
+                            Margin="0,20,0,0">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="1" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.EmptyView>
+                    <Grid VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Padding="32">
+                        <VerticalStackLayout Spacing="16" HorizontalOptions="Center" VerticalOptions="Center">
+                            <Image Source="star_icon.png" HeightRequest="80" WidthRequest="80" Opacity="0.5" />
+                            <Label Text="You haven't rated any movies yet." TextColor="#bdbdbd" FontSize="18" HorizontalOptions="Center" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:UserRating">
+                        <Frame Margin="8" 
+                               Padding="0" 
+                               CornerRadius="16" 
+                               HasShadow="True" 
+                               BackgroundColor="#232526" 
+                               BorderColor="#7B2FF2">
+                            <Grid RowDefinitions="Auto,Auto">
+                                <!-- Movie Poster -->
+                                <Grid>
+                                    <Image x:Name="PosterImage"
+                                           Source="{Binding Movie.PosterPath, Converter={StaticResource NullToNoImageConverter}}"
+                                           Aspect="AspectFill"
+                                           HeightRequest="200"
+                                           WidthRequest="150"
+                                           VerticalOptions="Center" 
+                                           HorizontalOptions="Center">
+                                        <Image.Behaviors>
+                                            <behaviors:FadeAnimation Duration="800" />
+                                        </Image.Behaviors>
+                                    </Image>
+                                    <ActivityIndicator x:Name="PosterLoadingIndicator"
+                                                     IsRunning="True"
+                                                     IsVisible="True"
+                                                     Color="#7B2FF2"
+                                                     HorizontalOptions="Center"
+                                                     VerticalOptions="Center" />
+                                </Grid>
+                                <!-- Movie Info -->
+                                <VerticalStackLayout Grid.Row="1" 
+                                                    Padding="12" 
+                                                    Spacing="4">
+                                    <Label Text="{Binding Movie.Title}" 
+                                           FontSize="16" 
+                                           FontAttributes="Bold" 
+                                           TextColor="#fff" 
+                                           LineBreakMode="TailTruncation" />
+                                    <HorizontalStackLayout Spacing="8">
+                                        <Label Text="{Binding Movie.ReleaseDate, StringFormat='{0:yyyy}'}" 
+                                               FontSize="12" 
+                                               TextColor="#bdbdbd" />
+                                        <Label Text="•" 
+                                               FontSize="12" 
+                                               TextColor="#bdbdbd" />
+                                        <Label Text="{Binding Movie.Genres}" 
+                                               FontSize="12" 
+                                               TextColor="#7B2FF2" />
+                                    </HorizontalStackLayout>
+                                    <StackLayout Orientation="Horizontal" 
+                                                Spacing="4">
+                                        <Image Source="star_icon.png" 
+                                               HeightRequest="14" 
+                                               WidthRequest="14" />
+                                        <Label Text="{Binding Rating, StringFormat='Your Rating: {0}'}" 
+                                               FontSize="14" 
+                                               TextColor="#F357A8" 
+                                               FontAttributes="Bold" />
+                                    </StackLayout>
+                                </VerticalStackLayout>
+                            </Grid>
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding BindingContext.RatingSelectedCommand, Source={x:Reference RatedMoviesCollection}}"
+                                                     CommandParameter="{Binding .}" />
+                            </Frame.GestureRecognizers>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage> 

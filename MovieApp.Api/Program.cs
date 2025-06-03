@@ -280,18 +280,14 @@ app.MapPut("/api/users/update-password", async (UpdatePasswordRequest request, I
 // Movie endpoints
 app.MapGet("/api/movies", async (IMovieService movieService) =>
 {
-    try
-    {
-        Console.WriteLine("GET /api/movies endpoint called");
-        var movies = await movieService.GetAllMoviesAsync();
-        Console.WriteLine($"Found {movies.Count()} movies");
-        return Results.Ok(movies);
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Error in GET /api/movies: {ex.Message}");
-        return Results.BadRequest(new { Error = "An error occurred while retrieving movies.", Details = ex.Message });
-    }
+    var movies = await movieService.GetAllMoviesAsync();
+    return Results.Ok(movies);
+});
+
+app.MapGet("/api/movies/search", async (string query, IMovieService movieService) =>
+{
+    var movies = await movieService.SearchMoviesAsync(query);
+    return Results.Ok(movies);
 });
 
 app.MapGet("/api/movies/{id}", async (int id, IMovieService movieService) =>

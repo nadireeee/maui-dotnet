@@ -12,11 +12,12 @@ public class MovieDetailViewModel : INotifyPropertyChanged
     private readonly ApiService _apiService;
     private Movie? _movie;
     private UserRating? _userRating;
-    private double _rating;
+    private int _rating;
     private string _review = string.Empty;
     private bool _isBusy;
     private string _errorMessage = string.Empty;
     private bool _isFavorite;
+    private bool _isTrailerVisible;
 
     public MovieDetailViewModel(ApiService apiService)
     {
@@ -27,6 +28,8 @@ public class MovieDetailViewModel : INotifyPropertyChanged
         OpenHomepageCommand = new Command(OnOpenHomepage);
         RateMovieCommand = new Command(OnRateMovie);
         GoBackCommand = new Command(async () => await Shell.Current.GoToAsync("///MovieListPage"));
+        ShowTrailerCommand = new Command(() => IsTrailerVisible = true);
+        HideTrailerCommand = new Command(() => IsTrailerVisible = false);
     }
 
     public Movie? Movie
@@ -79,7 +82,7 @@ public class MovieDetailViewModel : INotifyPropertyChanged
         }
     }
 
-    public double Rating
+    public int Rating
     {
         get => _rating;
         set
@@ -118,6 +121,12 @@ public class MovieDetailViewModel : INotifyPropertyChanged
         }
     }
 
+    public bool IsTrailerVisible
+    {
+        get => _isTrailerVisible;
+        set { _isTrailerVisible = value; OnPropertyChanged(); }
+    }
+
     public string Title => Movie?.Title ?? string.Empty;
     public string Overview => Movie?.Overview ?? string.Empty;
     public string? PosterPath => Movie?.PosterPath;
@@ -148,6 +157,8 @@ public class MovieDetailViewModel : INotifyPropertyChanged
     public ICommand OpenHomepageCommand { get; }
     public ICommand RateMovieCommand { get; }
     public ICommand GoBackCommand { get; }
+    public ICommand ShowTrailerCommand { get; }
+    public ICommand HideTrailerCommand { get; }
 
     public bool IsBusy
     {
@@ -177,6 +188,38 @@ public class MovieDetailViewModel : INotifyPropertyChanged
 
     public Command SaveRatingCommand { get; }
 
+    public string? TrailerEmbedUrl
+    {
+        get
+        {
+            if (Movie?.TrailerUrl == null) return null;
+            // YouTube linkini embed formatına çevir
+            if (Movie.TrailerUrl.Contains("youtube.com") || Movie.TrailerUrl.Contains("youtu.be"))
+            {
+                var videoId = ExtractYouTubeId(Movie.TrailerUrl);
+                if (!string.IsNullOrEmpty(videoId))
+                    return $"https://www.youtube.com/embed/{videoId}?autoplay=1";
+            }
+            return Movie.TrailerUrl;
+        }
+    }
+
+    private string? ExtractYouTubeId(string url)
+    {
+        // youtu.be/xxxx veya youtube.com/watch?v=xxxx
+        if (url.Contains("youtu.be/"))
+        {
+            var parts = url.Split("youtu.be/");
+            if (parts.Length > 1) return parts[1].Split('?')[0];
+        }
+        if (url.Contains("watch?v="))
+        {
+            var parts = url.Split("watch?v=");
+            if (parts.Length > 1) return parts[1].Split('&')[0];
+        }
+        return null;
+    }
+
     public async Task LoadMovieAsync(int movieId)
     {
         if (IsBusy)
@@ -189,24 +232,28 @@ public class MovieDetailViewModel : INotifyPropertyChanged
             System.Diagnostics.Debug.WriteLine($"[MovieDetailViewModel] Film detayları yükleniyor: {movieId}");
 
             Movie = await _apiService.GetMovieByIdAsync(movieId);
+            System.Diagnostics.Debug.WriteLine($"[MovieDetailViewModel] GetMovieByIdAsync yanıtı: {(Movie != null ? "Başarılı" : "Başarısız")}");
             if (Movie == null)
             {
                 ErrorMessage = "Film bulunamadı.";
+                System.Diagnostics.Debug.WriteLine($"[MovieDetailViewModel] Film bulunamadı: {movieId}");
                 return;
             }
 
             // Kullanıcı ID'sini al
             var userId = await _apiService.GetCurrentUserId();
+            System.Diagnostics.Debug.WriteLine($"[MovieDetailViewModel] Kullanıcı ID: {userId}");
             if (userId != null)
             {
                 // Favori durumunu kontrol et
                 IsFavorite = await _apiService.IsFavoriteAsync(userId.Value, movieId);
-                
+                System.Diagnostics.Debug.WriteLine($"[MovieDetailViewModel] IsFavorite: {IsFavorite}");
                 // Kullanıcı değerlendirmesini al
                 UserRating = await _apiService.GetUserRatingAsync(userId.Value, movieId);
+                System.Diagnostics.Debug.WriteLine($"[MovieDetailViewModel] GetUserRatingAsync yanıtı: {(UserRating != null ? "Var" : "Yok")}");
                 if (UserRating != null)
                 {
-                    Rating = UserRating.Rating;
+                    Rating = (int)UserRating.Rating;
                     Review = UserRating.Review ?? string.Empty;
                 }
             }
@@ -231,40 +278,52 @@ public class MovieDetailViewModel : INotifyPropertyChanged
         {
             IsBusy = true;
             ErrorMessage = string.Empty;
-
-            // TODO: Kullanıcı ID'sini al
-            int userId = 1; // Geçici olarak 1 kullanıyoruz
+            System.Diagnostics.Debug.WriteLine($"[MovieDetailViewModel] SaveRatingAsync başlatıldı. MovieId: {Movie.Id}");
+            var userId = await _apiService.GetCurrentUserId();
+            System.Diagnostics.Debug.WriteLine($"[MovieDetailViewModel] SaveRatingAsync userId: {userId}");
+            if (userId == null)
+            {
+                ErrorMessage = "Kullanıcı bulunamadı. Lütfen tekrar giriş yapın.";
+                await Shell.Current.DisplayAlert("Hata", ErrorMessage, "Tamam");
+                System.Diagnostics.Debug.WriteLine($"[MovieDetailViewModel] SaveRatingAsync: Kullanıcı bulunamadı.");
+                return;
+            }
 
             var rating = new UserRating
             {
-                UserId = userId,
+                UserId = userId.Value,
                 MovieId = Movie.Id,
                 Rating = Rating,
                 Review = Review
             };
-
+            System.Diagnostics.Debug.WriteLine($"[MovieDetailViewModel] SaveRatingAsync rating objesi oluşturuldu: {System.Text.Json.JsonSerializer.Serialize(rating)}");
             if (UserRating == null)
             {
                 UserRating = await _apiService.CreateUserRatingAsync(rating);
+                System.Diagnostics.Debug.WriteLine($"[MovieDetailViewModel] CreateUserRatingAsync yanıtı: {(UserRating != null ? "Başarılı" : "Başarısız")}");
             }
             else
             {
                 UserRating = await _apiService.UpdateUserRatingAsync(rating);
+                System.Diagnostics.Debug.WriteLine($"[MovieDetailViewModel] UpdateUserRatingAsync yanıtı: {(UserRating != null ? "Başarılı" : "Başarısız")}");
             }
 
             if (UserRating != null)
             {
-                // Başarılı - Film listesine dön
-                await Shell.Current.GoToAsync("///MovieListPage");
+                await Shell.Current.DisplayAlert("Başarılı", "Puan kaydedildi!", "Tamam");
             }
             else
             {
                 ErrorMessage = "Değerlendirme kaydedilirken bir hata oluştu.";
+                await Shell.Current.DisplayAlert("Hata", ErrorMessage, "Tamam");
+                System.Diagnostics.Debug.WriteLine($"[MovieDetailViewModel] SaveRatingAsync: Değerlendirme kaydedilemedi.");
             }
         }
-        catch
+        catch (Exception ex)
         {
-            ErrorMessage = "Değerlendirme kaydedilirken bir hata oluştu.";
+            ErrorMessage = $"Değerlendirme kaydedilirken bir hata oluştu: {ex.Message}";
+            System.Diagnostics.Debug.WriteLine($"[SaveRatingAsync] Hata: {ex.Message}\n{ex.StackTrace}");
+            await Shell.Current.DisplayAlert("Hata", ErrorMessage, "Tamam");
         }
         finally
         {

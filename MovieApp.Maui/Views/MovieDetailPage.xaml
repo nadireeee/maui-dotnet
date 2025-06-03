@@ -121,7 +121,12 @@
                         <Button Text="{Binding IsFavorite, Converter={StaticResource BoolToFavoriteTextConverter}}" 
                                 Command="{Binding AddToFavoritesCommand}" 
                                 Style="{StaticResource NeonButtonStyle}" />
-                        <Button Text="Rate Movie" Command="{Binding RateMovieCommand}" Style="{StaticResource NeonButtonStyle}" />
+                        
+                        <!-- Rate Movie Section -->
+                        <Label Text="Filmi Puanla" FontSize="18" TextColor="#fff" />
+                        <Slider Minimum="1" Maximum="10" Value="{Binding Rating, Mode=TwoWay}" ValueChanged="Slider_ValueChanged" MinimumTrackColor="#F357A8" MaximumTrackColor="#7B2FF2" ThumbColor="#fff" />
+                        <Label Text="{Binding Rating, StringFormat='Seçilen Puan: {0:F1}'}" FontSize="16" TextColor="#7B2FF2" />
+                        <Button Text="Puanı Kaydet" Command="{Binding SaveRatingCommand}" Style="{StaticResource NeonButtonStyle}" />
                     </VerticalStackLayout>
                 </Frame>
             </VerticalStackLayout>

@@ -4,6 +4,8 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using MovieApp.Maui.Models;
 using MovieApp.Maui.Services;
+using System.Diagnostics;
+using System.Threading;
 
 namespace MovieApp.Maui.ViewModels;
 
@@ -27,6 +29,9 @@ public class MovieListViewModel : INotifyPropertyChanged
     private List<string> _filterOptions = new() { "All", "Top Rated", "Newest", "Popular", "Drama" };
     private bool _isFilterActive;
     private bool _isSearching;
+    private bool _isLocalSelected;
+    private bool _isForeignSelected;
+    private CancellationTokenSource? _searchCancellationTokenSource;
     public List<string> FilterOptions => _filterOptions;
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -199,6 +204,42 @@ public class MovieListViewModel : INotifyPropertyChanged
         }
     }
 
+    public bool IsLocalSelected
+    {
+        get => _isLocalSelected;
+        set
+        {
+            if (_isLocalSelected != value)
+            {
+                _isLocalSelected = value;
+                OnPropertyChanged();
+                if (value)
+                {
+                    IsForeignSelected = false;
+                    IsAllSelected = false;
+                }
+            }
+        }
+    }
+
+    public bool IsForeignSelected
+    {
+        get => _isForeignSelected;
+        set
+        {
+            if (_isForeignSelected != value)
+            {
+                _isForeignSelected = value;
+                OnPropertyChanged();
+                if (value)
+                {
+                    IsLocalSelected = false;
+                    IsAllSelected = false;
+                }
+            }
+        }
+    }
+
     public ICommand MovieSelectedCommand { get; }
     public ICommand LoadMoviesCommand { get; }
     public Command SearchCommand { get; }
@@ -272,6 +313,12 @@ public class MovieListViewModel : INotifyPropertyChanged
                 case "Drama":
                     movies = await _apiService.GetMoviesByGenreAsync(SelectedFilter);
                     break;
+                case "Local":
+                    movies = (await _apiService.GetMoviesAsync()).Where(m => m.IsLocal).ToList();
+                    break;
+                case "Foreign":
+                    movies = (await _apiService.GetMoviesAsync()).Where(m => !m.IsLocal).ToList();
+                    break;
                 default:
                     movies = await _apiService.GetMoviesAsync();
                     break;
@@ -298,20 +345,31 @@ public class MovieListViewModel : INotifyPropertyChanged
 
         try
         {
+            // Önceki aramayı iptal et
+            _searchCancellationTokenSource?.Cancel();
+            _searchCancellationTokenSource = new CancellationTokenSource();
+
+            // 300ms bekle
+            await Task.Delay(300, _searchCancellationTokenSource.Token);
+
             IsBusy = true;
             IsSearching = true;
             ErrorMessage = string.Empty;
             System.Diagnostics.Debug.WriteLine($"[MovieListViewModel] Arama başlatıldı: '{SearchText}'");
-            var movies = await _apiService.GetMoviesAsync();
-            var filteredMovies = movies.Where(m =>
-                (m.Title ?? "").Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
-                (m.Overview ?? "").Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
-                (m.Director ?? "").Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
-                (m.Cast ?? "").Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
-                (m.Genres ?? "").Contains(SearchText, StringComparison.OrdinalIgnoreCase))
-                .ToList();
-            System.Diagnostics.Debug.WriteLine($"[MovieListViewModel] Arama sonucu: {filteredMovies.Count} film bulundu.");
-            Movies = new ObservableCollection<Movie>(filteredMovies);
+            
+            // Tüm filmleri al ve isme göre filtrele
+            var allMovies = await _apiService.GetMoviesAsync();
+            var searchResults = allMovies.Where(m => 
+                m.Title.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
+                m.OriginalTitle?.Contains(SearchText, StringComparison.OrdinalIgnoreCase) == true
+            ).ToList();
+
+            System.Diagnostics.Debug.WriteLine($"[MovieListViewModel] Arama sonucu: {searchResults.Count} film bulundu.");
+            Movies = new ObservableCollection<Movie>(searchResults);
+        }
+        catch (OperationCanceledException)
+        {
+            // Arama iptal edildi, bir şey yapma
         }
         catch (Exception ex)
         {
@@ -346,6 +404,8 @@ public class MovieListViewModel : INotifyPropertyChanged
         IsNewestSelected = false;
         IsPopularSelected = false;
         IsDramaSelected = false;
+        IsLocalSelected = false;
+        IsForeignSelected = false;
 
         // Seçilen filtreyi işaretle
         switch (filter)
@@ -364,6 +424,12 @@ public class MovieListViewModel : INotifyPropertyChanged
                 break;
             case "Drama":
                 IsDramaSelected = true;
+                break;
+            case "Local":
+                IsLocalSelected = true;
+                break;
+            case "Foreign":
+                IsForeignSelected = true;
                 break;
         }
 
@@ -429,6 +495,35 @@ public class MovieListViewModel : INotifyPropertyChanged
     {
         SearchText = string.Empty;
         LoadMoviesCommand.Execute(null);
+    }
+
+    private async Task FilterMoviesAsync(string filter)
+    {
+        try
+        {
+            IsBusy = true;
+            var allMovies = await _apiService.GetMoviesAsync();
+
+            switch (filter)
+            {
+                case "Local":
+                    Movies = new ObservableCollection<Movie>(allMovies.Where(m => m.IsLocal));
+                    break;
+                case "Foreign":
+                    Movies = new ObservableCollection<Movie>(allMovies.Where(m => !m.IsLocal));
+                    break;
+                // ... existing cases ...
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error filtering movies: {ex.Message}");
+            await Application.Current.MainPage.DisplayAlert("Error", "Failed to filter movies", "OK");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     protected void OnPropertyChanged([CallerMemberName] string? name = null)

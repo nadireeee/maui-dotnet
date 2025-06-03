@@ -17,6 +17,7 @@ public partial class AppShell : Shell
 		Routing.RegisterRoute(nameof(MovieListPage), typeof(MovieListPage));
 		Routing.RegisterRoute(nameof(MovieDetailPage), typeof(MovieDetailPage));
 		Routing.RegisterRoute(nameof(FavoriteMoviesPage), typeof(FavoriteMoviesPage));
+		Routing.RegisterRoute(nameof(RatedMoviesPage), typeof(RatedMoviesPage));
 
 		// Configure navigation
 		Shell.SetNavBarIsVisible(this, true);

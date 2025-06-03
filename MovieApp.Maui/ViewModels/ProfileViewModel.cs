@@ -17,6 +17,7 @@ public class ProfileViewModel : INotifyPropertyChanged
     private string _errorMessage = string.Empty;
     private string _username = string.Empty;
     private string _email = string.Empty;
+    private int _ratedMoviesCount;
 
     public ProfileViewModel(ApiService apiService)
     {
@@ -25,6 +26,7 @@ public class ProfileViewModel : INotifyPropertyChanged
         ChangePasswordCommand = new Command(OnChangePasswordClicked);
         ForgotPasswordCommand = new Command(OnForgotPasswordClicked);
         LogoutCommand = new Command(OnLogoutClicked);
+        GoToRatedMoviesCommand = new Command(async () => await GoToRatedMoviesAsync());
         LoadUserData();
     }
 
@@ -94,10 +96,17 @@ public class ProfileViewModel : INotifyPropertyChanged
         }
     }
 
+    public int RatedMoviesCount
+    {
+        get => _ratedMoviesCount;
+        set { _ratedMoviesCount = value; OnPropertyChanged(); }
+    }
+
     public ICommand EditProfileCommand { get; }
     public ICommand ChangePasswordCommand { get; }
     public ICommand ForgotPasswordCommand { get; }
     public ICommand LogoutCommand { get; }
+    public Command GoToRatedMoviesCommand { get; }
 
     public async void LoadUserData()
     {
@@ -145,6 +154,10 @@ public class ProfileViewModel : INotifyPropertyChanged
                     }
                     Debug.WriteLine($"Loaded {FavoriteMovies.Count} favorite movies");
                 }
+
+                // Load rated movies count
+                var ratings = await _apiService.GetUserRatingsAsync(userId.Value);
+                RatedMoviesCount = ratings?.Count ?? 0;
             }
             else
             {
@@ -301,6 +314,11 @@ public class ProfileViewModel : INotifyPropertyChanged
     {
         await _apiService.ClearToken();
         await Shell.Current.GoToAsync("//LoginPage");
+    }
+
+    private async Task GoToRatedMoviesAsync()
+    {
+        await Shell.Current.GoToAsync("///RatedMoviesPage");
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;

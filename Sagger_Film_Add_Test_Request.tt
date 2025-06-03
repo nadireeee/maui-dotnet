@@ -1,0 +1,40 @@
+ADD NE FILM
+{
+  "title": "The Avengers",
+  "overview": "Earth's mightiest heroes must come together and learn to fight as a team to stop the mischievous Loki and his alien army from enslaving humanity.",
+  "posterPath": "https://upload.wikimedia.org/wikipedia/en/f/f9/TheAvengers2012Poster.jpg",
+  "releaseDate": "2012-05-04T00:00:00Z",
+  "voteAverage": 8.0,
+  "voteCount": 1600000,
+  "popularity": 135.4,
+  "budget": 220000000,
+  "revenue": 1518812988,
+  "runtime": 143,
+  "status": "Released",
+  "isAdult": false,
+  "isLocal": false,
+  "originalLanguage": "en",
+  "originalTitle": "The Avengers",
+  "tagline": "Some assembly required.",
+  "director": "Joss Whedon",
+  "cast": "Robert Downey Jr., Chris Evans, Scarlett Johansson, Chris Hemsworth, Mark Ruffalo, Jeremy Renner",
+  "genres": "Action, Adventure, Science Fiction",
+  "keywords": "superhero, marvel, team, alien invasion, shield, iron man, captain america",
+  "productionCompanies": "Marvel Studios",
+  "productionCountries": "United States",
+  "spokenLanguages": "English",
+  "homepage": "https://www.marvel.com/movies/the-avengers",
+  "trailerUrl": "https://www.youtube.com/watch?v=eOrNdBpGMv8",
+  "createdAt": "2025-06-03T17:42:42.381Z",
+  "updatedAt": "2025-06-03T17:42:42.381Z"
+}
+
+
+UPDATE AND GET TUE posterPath
+/api/movies/id  
+{
+   "id": 17,
+  "title": "The Avengers",
+  "overview": "Earth's mightiest heroes must come together and learn to fight as a team to stop the mischievous Loki and his alien army from enslaving humanity.",
+  "posterPath": "https://lumiere-a.akamaihd.net/v1/images/p_avengersendgame_19751_e14a0104.jpeg?region=0%2C0%2C540%2C810"
+}

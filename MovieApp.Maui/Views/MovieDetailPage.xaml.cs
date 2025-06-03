@@ -22,4 +22,14 @@ public partial class MovieDetailPage : ContentPage, IQueryAttributable
             await _viewModel.LoadMovieAsync(movieId);
         }
     }
+
+    private void Slider_ValueChanged(object sender, ValueChangedEventArgs e)
+    {
+        var slider = (Slider)sender;
+        int newValue = (int)Math.Round(e.NewValue);
+        if (slider.Value != newValue)
+            slider.Value = newValue;
+        if (BindingContext is MovieDetailViewModel vm)
+            vm.Rating = newValue;
+    }
 } 
