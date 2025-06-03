@@ -520,11 +520,6 @@ dotnet run
 
 ---
 
-## Notlar ve Eksikler
-- Şifre değiştirme ekranı temel düzeyde, gelişmiş validasyon eklenebilir. (❌)
-- Gelişmiş kullanıcı yönetimi ve e-posta doğrulama eklenmemiştir.
-- Testler ve ek güvenlik önlemleri geliştirilebilir.
-
 ---
 
 Her türlü soru ve geri bildirim için iletişime geçebilirsiniz. 
