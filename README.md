@@ -507,8 +507,8 @@ dotnet ef database update --project MovieApp.Api
 ```sh
 cd MovieApp.Api
 dotnet run
-```
-- API varsayılan olarak `http://localhost:5000` adresinde çalışır.
+``
+-[ API varsayılan olarak `http://localhost`](http://localhost:5175/swagger/index.html) adresinde çalışır.
 
 ### 6. MAUI Uygulamasını Çalıştırın
 ```sh
