@@ -38,3 +38,87 @@ UPDATE AND GET TUE posterPath
   "overview": "Earth's mightiest heroes must come together and learn to fight as a team to stop the mischievous Loki and his alien army from enslaving humanity.",
   "posterPath": "https://lumiere-a.akamaihd.net/v1/images/p_avengersendgame_19751_e14a0104.jpeg?region=0%2C0%2C540%2C810"
 }
+
+// RECEP İVEDİK EKLEME (POST /api/movies)
+{
+  "title": "Recep İvedik",
+  "overview": "Recep İvedik, saf ve dobra bir adamın komik maceralarını anlatır.",
+  "posterPath": "https://upload.wikimedia.org/wikipedia/tr/7/7c/Recep_ivedik_1.jpg",
+  "releaseDate": "2008-02-22T00:00:00Z",
+  "voteAverage": 6.2,
+  "voteCount": 12000,
+  "popularity": 55.4,
+  "budget": 500000,
+  "revenue": 25000000,
+  "runtime": 90,
+  "status": "Released",
+  "isAdult": false,
+  "isLocal": true,
+  "originalLanguage": "tr",
+  "originalTitle": "Recep İvedik",
+  "tagline": "Komedi dolu bir macera!",
+  "director": "Togan Gökbakar",
+  "cast": "Şahan Gökbakar, Fatma Toptaş",
+  "genres": "Comedy",
+  "keywords": "komedi, türkiye, macera",
+  "productionCompanies": "Aksoy Film",
+  "productionCountries": "Turkey",
+  "spokenLanguages": "Turkish",
+  "homepage": "https://www.example.com/recepivedik",
+  "trailerUrl": "https://www.youtube.com/watch?v=example_recepivedik",
+  "createdAt": "2025-06-03T17:42:42.381Z",
+  "updatedAt": "2025-06-03T17:42:42.381Z"
+}
+
+// RECEP İVEDİK GÜNCELLEME (PUT /api/movies/{id})
+{
+  "id": 18,
+  "title": "Recep İvedik",
+  "overview": "Recep İvedik, saf ve dobra bir adamın komik maceralarını anlatır.",
+  "posterPath": "https://upload.wikimedia.org/wikipedia/tr/7/7c/Recep_ivedik_1.jpg",
+  "releaseDate": "2008-02-22T00:00:00Z",
+  "voteAverage": 6.2,
+  "voteCount": 12000,
+  "popularity": 55.4,
+  "budget": 500000,
+  "revenue": 25000000,
+  "runtime": 90,
+  "status": "Released",
+  "isAdult": false,
+  "isLocal": true,
+  "originalLanguage": "tr",
+  "originalTitle": "Recep İvedik",
+  "tagline": "Komedi dolu bir macera!",
+  "director": "Togan Gökbakar",
+  "cast": "Şahan Gökbakar, Fatma Toptaş",
+  "genres": "Comedy",
+  "keywords": "komedi, türkiye, macera",
+  "productionCompanies": "Aksoy Film",
+  "productionCountries": "Turkey",
+  "spokenLanguages": "Turkish",
+  "homepage": "https://www.example.com/recepivedik",
+  "trailerUrl": "https://www.youtube.com/watch?v=example_recepivedik",
+  "createdAt": "2025-06-03T17:42:42.381Z",
+  "updatedAt": "2025-06-03T17:42:42.381Z"
+}
+
+// KULLANICI FİLM OYLA (POST /api/users/{userId}/ratings)
+{
+  "userId": 4,
+  "movieId": 18,
+  "rating": 7,
+  "review": "Çok eğlenceliydi!",
+  "createdAt": "2025-06-03T17:42:42.381Z"
+}
+
+// FAVORİLERE FİLM EKLE (POST /api/users/{userId}/favorites/{movieId})
+// Body gerekmez, sadece endpoint:
+// POST /api/users/4/favorites/18
+
+// FİLM DETAY GETİR (GET /api/movies/{id})
+// Body gerekmez, sadece endpoint:
+// GET /api/movies/18
+
+// FİLM SİL (DELETE /api/movies/{id})
+// Body gerekmez, sadece endpoint:
+// DELETE /api/movies/18
