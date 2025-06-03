@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel="clr-namespace:MovieApp.Maui.ViewModels"
+             xmlns:behaviors="clr-namespace:MovieApp.Maui.Behaviors"
+             x:Class="MovieApp.Maui.Views.LoginPage"
+             x:DataType="viewmodel:LoginViewModel"
+             BackgroundColor="{StaticResource Background}"
+             Title="Login">
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="0" WidthRequest="370">
+                <!-- Logo/Icon -->
+                <Image Source="login_icon.png"
+                       HeightRequest="80"
+                       WidthRequest="80"
+                       HorizontalOptions="Center"
+                       Margin="0,40,0,10">
+                    <Image.Behaviors>
+                        <behaviors:ScaleAnimation Duration="1000" Scale="1.2" />
+                    </Image.Behaviors>
+                </Image>
+
+                <!-- App Name -->
+                <Label Text="MovieApp" FontSize="32" FontAttributes="Bold" TextColor="{StaticResource Primary}" HorizontalOptions="Center" Margin="0,0,0,8"/>
+                <Label Text="Welcome back! Please login to continue." FontSize="14" TextColor="{StaticResource TextSecondary}" HorizontalOptions="Center" Margin="0,0,0,24"/>
+
+                <!-- Card for entries -->
+                <Frame BackgroundColor="{StaticResource SurfaceVariant}"
+                       CornerRadius="18"
+                       Padding="20,24"
+                       HasShadow="True"
+                       BorderColor="{StaticResource Secondary}">
+                    <VerticalStackLayout Spacing="16">
+                        <!-- Username Entry -->
+                        <Grid ColumnDefinitions="32,*,32">
+                            <Image Source="user_icon.png" HeightRequest="20" WidthRequest="20" VerticalOptions="Center" HorizontalOptions="Center"/>
+                            <Entry Grid.Column="1" Placeholder="Username" Text="{Binding Username}" Style="{StaticResource NeonEntryStyle}" TextColor="{StaticResource Primary}" PlaceholderColor="{StaticResource Secondary}"/>
+                        </Grid>
+                        <!-- Password Entry -->
+                        <Grid ColumnDefinitions="32,*,32">
+                            <Image Source="lock_icon.png" HeightRequest="20" WidthRequest="20" VerticalOptions="Center" HorizontalOptions="Center"/>
+                            <Entry Grid.Column="1" Placeholder="Password" Text="{Binding Password}" Style="{StaticResource NeonEntryStyle}" IsPassword="True" TextColor="{StaticResource Primary}" PlaceholderColor="{StaticResource Secondary}"/>
+                        </Grid>
+                        <!-- Forgot Password Link -->
+                        <Grid>
+                            <Label Text="Forgot Password?" TextColor="{StaticResource Primary}" FontSize="13" HorizontalOptions="End" VerticalOptions="Center">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ForgotPasswordCommand}" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Error Message -->
+                <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorLabelStyle}" Margin="0,8,0,0">
+                    <Label.Behaviors>
+                        <behaviors:ShakeAnimation Duration="500" />
+                    </Label.Behaviors>
+                </Label>
+
+                <!-- Login Button -->
+                <Button Text="Login"
+                        Command="{Binding LoginCommand}"
+                        Style="{StaticResource NeonButtonStyle}"
+                        HorizontalOptions="Fill"
+                        Margin="0,18,0,0">
+                    <Button.Behaviors>
+                        <behaviors:ScaleAnimation Duration="500" Scale="1.05" />
+                    </Button.Behaviors>
+                </Button>
+
+                <!-- Register Button -->
+                <Button Text="Don't have an account? Register"
+                        Command="{Binding GoToRegisterCommand}"
+                        Style="{StaticResource NeonButtonStyleSecondary}"
+                        HorizontalOptions="Fill"
+                        Margin="0,8,0,0">
+                    <Button.Behaviors>
+                        <behaviors:FadeAnimation Duration="1400" />
+                    </Button.Behaviors>
+                </Button>
+
+                <!-- Activity Indicator -->
+                <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                   IsVisible="{Binding IsBusy}"
+                                   Color="{StaticResource Primary}"
+                                   HorizontalOptions="Center"
+                                   Margin="0,8,0,0">
+                    <ActivityIndicator.Behaviors>
+                        <behaviors:FadeAnimation Duration="300" />
+                    </ActivityIndicator.Behaviors>
+                </ActivityIndicator>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage> 

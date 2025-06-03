@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel="clr-namespace:MovieApp.Maui.ViewModels"
+             x:Class="MovieApp.Maui.Views.MovieDetailPage"
+             x:DataType="viewmodel:MovieDetailViewModel"
+             BackgroundColor="#181818"
+             Title="Movie Details">
+    
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Back" Command="{Binding GoBackCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Content>
+        <ScrollView>
+            <VerticalStackLayout Spacing="18" Padding="24,32" BackgroundColor="Transparent">
+                <!-- Poster and Basic Info -->
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="20">
+                    <!-- Left Column: Poster -->
+                    <Frame Grid.Column="0" Padding="0" CornerRadius="18" HasShadow="True" BackgroundColor="#232526" HeightRequest="320" WidthRequest="220" HorizontalOptions="Center">
+                        <Image Source="{Binding Movie.PosterPath, Converter={StaticResource NullToNoImageConverter}}"
+                               Aspect="AspectFill"
+                               HeightRequest="320" WidthRequest="220" />
+                    </Frame>
+                    
+                    <!-- Right Column: Basic Info -->
+                    <VerticalStackLayout Grid.Column="1" Spacing="12">
+                        <Label Text="{Binding Title}" FontSize="28" FontAttributes="Bold" TextColor="#fff" />
+                        <Label Text="{Binding OriginalTitle, StringFormat='Original Title: {0}'}" FontSize="16" TextColor="#bdbdbd" />
+                        <Label Text="{Binding ReleaseDate, StringFormat='Released: {0:yyyy-MM-dd}'}" FontSize="16" TextColor="#bdbdbd" />
+                        <Label Text="{Binding Status}" FontSize="16" TextColor="#7B2FF2" />
+                        
+                        <!-- Ratings -->
+                        <Frame BackgroundColor="#232526" Padding="12" CornerRadius="10">
+                            <VerticalStackLayout Spacing="8">
+                                <StackLayout Orientation="Horizontal" Spacing="6">
+                                    <Image Source="star_icon.png" HeightRequest="20" WidthRequest="20" />
+                                    <Label Text="{Binding VoteAverage, StringFormat='{0:F1}'}" FontSize="18" TextColor="#F357A8" />
+                                    <Label Text="{Binding VoteCount, StringFormat='({0} votes)'}" FontSize="14" TextColor="#bdbdbd" />
+                                </StackLayout>
+                                <StackLayout Orientation="Horizontal" Spacing="6">
+                                    <Image Source="star_icon.png" HeightRequest="20" WidthRequest="20" />
+                                    <Label Text="{Binding UserRatingAverage, StringFormat='{0:F1}'}" FontSize="18" TextColor="#F357A8" />
+                                    <Label Text="{Binding UserRatingCount, StringFormat='({0} user ratings)'}" FontSize="14" TextColor="#bdbdbd" />
+                                </StackLayout>
+                            </VerticalStackLayout>
+                        </Frame>
+                        
+                        <!-- Runtime and Language -->
+                        <HorizontalStackLayout Spacing="12">
+                            <Label Text="{Binding Runtime, StringFormat='{0} min'}" FontSize="16" TextColor="#bdbdbd" />
+                            <Label Text="{Binding OriginalLanguage, StringFormat='• {0}'}" FontSize="16" TextColor="#bdbdbd" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Grid>
+
+                <!-- Overview -->
+                <Frame BackgroundColor="#232526" Padding="16" CornerRadius="10">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Overview" FontSize="20" FontAttributes="Bold" TextColor="#fff" />
+                        <Label Text="{Binding Overview}" FontSize="16" TextColor="#fff" LineBreakMode="WordWrap" />
+                        <Label Text="{Binding Tagline}" FontSize="14" TextColor="#7B2FF2" FontAttributes="Italic" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Genres and Cast -->
+                <Frame BackgroundColor="#232526" Padding="16" CornerRadius="10">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Genres" FontSize="20" FontAttributes="Bold" TextColor="#fff" />
+                        <Label Text="{Binding Genres}" FontSize="16" TextColor="#7B2FF2" />
+                        
+                        <Label Text="Cast" FontSize="20" FontAttributes="Bold" TextColor="#fff" />
+                        <Label Text="{Binding Cast}" FontSize="16" TextColor="#bdbdbd" />
+                        
+                        <Label Text="Director" FontSize="20" FontAttributes="Bold" TextColor="#fff" />
+                        <Label Text="{Binding Director}" FontSize="16" TextColor="#bdbdbd" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Production Info -->
+                <Frame BackgroundColor="#232526" Padding="16" CornerRadius="10">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Production" FontSize="20" FontAttributes="Bold" TextColor="#fff" />
+                        <Label Text="{Binding ProductionCompanies, StringFormat='Companies: {0}'}" FontSize="16" TextColor="#bdbdbd" />
+                        <Label Text="{Binding ProductionCountries, StringFormat='Countries: {0}'}" FontSize="16" TextColor="#bdbdbd" />
+                        <Label Text="{Binding SpokenLanguages, StringFormat='Languages: {0}'}" FontSize="16" TextColor="#bdbdbd" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Financial Info -->
+                <Frame BackgroundColor="#232526" Padding="16" CornerRadius="10">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Financial Information" FontSize="20" FontAttributes="Bold" TextColor="#fff" />
+                        <Label Text="{Binding Budget, StringFormat='Budget: ${0:N0}'}" FontSize="16" TextColor="#bdbdbd" />
+                        <Label Text="{Binding Revenue, StringFormat='Revenue: ${0:N0}'}" FontSize="16" TextColor="#bdbdbd" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Additional Info -->
+                <Frame BackgroundColor="#232526" Padding="16" CornerRadius="10">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Additional Information" FontSize="20" FontAttributes="Bold" TextColor="#fff" />
+                        <Label Text="{Binding Keywords}" FontSize="16" TextColor="#bdbdbd" />
+                        <Label Text="{Binding IsAdult, StringFormat='Adult Content: {0}'}" FontSize="16" TextColor="#bdbdbd" />
+                        <Label Text="{Binding Popularity, StringFormat='Popularity: {0}'}" FontSize="16" TextColor="#bdbdbd" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Links -->
+                <Frame BackgroundColor="#232526" Padding="16" CornerRadius="10">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Links" FontSize="20" FontAttributes="Bold" TextColor="#fff" />
+                        <Button Text="Watch Trailer" Command="{Binding OpenTrailerCommand}" Style="{StaticResource NeonButtonStyle}" />
+                        <Button Text="Visit Homepage" Command="{Binding OpenHomepageCommand}" Style="{StaticResource NeonButtonStyle}" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Action Buttons -->
+                <Frame BackgroundColor="#232526" Padding="16" CornerRadius="10">
+                    <VerticalStackLayout Spacing="12">
+                        <Button Text="{Binding IsFavorite, Converter={StaticResource BoolToFavoriteTextConverter}}" 
+                                Command="{Binding AddToFavoritesCommand}" 
+                                Style="{StaticResource NeonButtonStyle}" />
+                        <Button Text="Rate Movie" Command="{Binding RateMovieCommand}" Style="{StaticResource NeonButtonStyle}" />
+                    </VerticalStackLayout>
+                </Frame>
+            </VerticalStackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage> 

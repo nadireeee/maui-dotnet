@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel="clr-namespace:MovieApp.Maui.ViewModels"
+             x:Class="MovieApp.Maui.Views.ProfilePage"
+             x:DataType="viewmodel:ProfileViewModel"
+             BackgroundColor="#181828"
+             Title="Profile">
+
+    <ScrollView>
+        <Grid RowDefinitions="Auto,Auto,*" Padding="16">
+            <!-- Header Section -->
+            <Frame Grid.Row="0" 
+                   BackgroundColor="#23233a" 
+                   CornerRadius="20" 
+                   Padding="20" 
+                   Margin="0,10"
+                   HasShadow="True">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="20">
+                    <!-- Profile Image -->
+                    <Frame Grid.Column="0" 
+                           HeightRequest="104" 
+                           WidthRequest="104" 
+                           CornerRadius="52" 
+                           Padding="2"
+                           BackgroundColor="#B388FF">
+                        <Frame HeightRequest="100" 
+                               WidthRequest="100" 
+                               CornerRadius="50" 
+                               Padding="0"
+                               BackgroundColor="#2D2D44">
+                            <Image Source="profile_icon.png" 
+                                   Aspect="AspectFill"
+                                   HeightRequest="100" 
+                                   WidthRequest="100" />
+                        </Frame>
+                    </Frame>
+
+                    <!-- User Info -->
+                    <VerticalStackLayout Grid.Column="1" 
+                                        Spacing="8" 
+                                        VerticalOptions="Center">
+                        <Label Text="{Binding Username}" 
+                               FontSize="24" 
+                               FontAttributes="Bold" 
+                               TextColor="White" />
+                        <Label Text="{Binding Email}" 
+                               FontSize="16" 
+                               TextColor="#B388FF" />
+                        <Button Text="Edit Profile" 
+                                Command="{Binding EditProfileCommand}"
+                                Style="{StaticResource NeonButtonStyleSecondary}"
+                                HeightRequest="36"
+                                FontSize="14"
+                                Padding="12,0" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Frame>
+
+            <!-- Stats Section -->
+            <Grid Grid.Row="1" 
+                  ColumnDefinitions="*,*" 
+                  ColumnSpacing="10" 
+                  Margin="0,10">
+                <Frame Grid.Column="0" 
+                       BackgroundColor="#23233a" 
+                       CornerRadius="15" 
+                       Padding="15"
+                       HasShadow="True">
+                    <VerticalStackLayout Spacing="5" 
+                                        HorizontalOptions="Center">
+                        <Label Text="Favorite Movies" 
+                               FontSize="14" 
+                               TextColor="#B388FF" 
+                               HorizontalOptions="Center" />
+                        <Label Text="{Binding FavoriteMovies.Count}" 
+                               FontSize="24" 
+                               FontAttributes="Bold" 
+                               TextColor="White" 
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <Frame Grid.Column="1" 
+                       BackgroundColor="#23233a" 
+                       CornerRadius="15" 
+                       Padding="15"
+                       HasShadow="True">
+                    <VerticalStackLayout Spacing="5" 
+                                        HorizontalOptions="Center">
+                        <Label Text="Rated Movies" 
+                               FontSize="14" 
+                               TextColor="#B388FF" 
+                               HorizontalOptions="Center" />
+                        <Label Text="0" 
+                               FontSize="24" 
+                               FontAttributes="Bold" 
+                               TextColor="White" 
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </Frame>
+            </Grid>
+
+            <!-- Settings Section -->
+            <VerticalStackLayout Grid.Row="2" 
+                                Spacing="15" 
+                                Margin="0,10">
+                <Label Text="Settings" 
+                       FontSize="20" 
+                       FontAttributes="Bold" 
+                       TextColor="White" 
+                       Margin="0,0,0,5" />
+
+                <!-- Account Settings -->
+                <Frame BackgroundColor="#23233a" 
+                       CornerRadius="15" 
+                       Padding="0"
+                       HasShadow="True">
+                    <VerticalStackLayout Spacing="0">
+                        <Button Text="Change Password" 
+                                Command="{Binding ChangePasswordCommand}"
+                                Style="{StaticResource NeonButtonStyleSecondary}"
+                                HeightRequest="50"
+                                FontSize="16"
+                                HorizontalOptions="Fill" />
+                        
+                        <BoxView HeightRequest="1" 
+                                 BackgroundColor="#2D2D44" 
+                                 Margin="15,0" />
+                        
+                        <Button Text="Forgot Password" 
+                                Command="{Binding ForgotPasswordCommand}"
+                                Style="{StaticResource NeonButtonStyleSecondary}"
+                                HeightRequest="50"
+                                FontSize="16"
+                                HorizontalOptions="Fill" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <!-- Logout Button -->
+                <Button Text="Logout" 
+                        Command="{Binding LogoutCommand}"
+                        Style="{StaticResource NeonButtonStyle}"
+                        HeightRequest="50"
+                        FontSize="16"
+                        Margin="0,10,0,0" />
+
+                <!-- Error Message -->
+                <Label Text="{Binding ErrorMessage}" 
+                       TextColor="#FF4081" 
+                       FontSize="14" 
+                       HorizontalOptions="Center" 
+                       IsVisible="{Binding ErrorMessage, Converter={StaticResource StringToBoolConverter}}" />
+
+                <!-- Loading Indicator -->
+                <ActivityIndicator IsRunning="{Binding IsBusy}" 
+                                 IsVisible="{Binding IsBusy}" 
+                                 Color="#B388FF" 
+                                 HorizontalOptions="Center" />
+            </VerticalStackLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage> 
